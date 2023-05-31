@@ -1,8 +1,7 @@
 import { authMiddleware } from '../src/middlewares.js';
 import { returnErrorResponse } from '../src/helpers/error.helper.js';
-import { generateToken, verifyToken } from '../src/helpers/jwt.helper.js';
+import { verifyToken } from '../src/helpers/jwt.helper.js';
 
-// Mock the necessary dependencies
 jest.mock("../src/helpers/error.helper.js");
 jest.mock("../src/helpers/jwt.helper.js");
 
@@ -35,7 +34,7 @@ describe("authMiddleware", () => {
     expect(returnErrorResponse).not.toHaveBeenCalled();
   });
 
-  test("[SUCCESS] Should set userId in req and call next if token is valid", () => {
+  it("[SUCCESS] Should set userId in req and call next if token is valid", () => {
     const token = "valid-token";
     const payload = { id: "user-id" };
     req.headers = {
@@ -51,7 +50,7 @@ describe("authMiddleware", () => {
     expect(returnErrorResponse).not.toHaveBeenCalled();
   });
 
-  test("[ERROR] Should call returnErrorResponse if token verification fails", () => {
+  it("[ERROR] Should call returnErrorResponse if token verification fails", () => {
     const error = new Error("Token verification failed");
     const token = "invalid-token";
     req.headers = {
