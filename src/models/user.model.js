@@ -89,7 +89,7 @@ async function comparePassword(candidatePassword) {
 function setVerified() {
 	this.code = null;
 	this.verified = true;
-	this.save();
+	return this.save();
 }
 
 userSchema.methods = {

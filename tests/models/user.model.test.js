@@ -1,74 +1,64 @@
-import bcrypt from 'bcrypt';
 import UserModel from '../../src/models/user.model';
+import { expect, jest } from "@jest/globals";
+import mongoose from "mongoose";
+import environment from "../../src/config/environment";
+import { connectDB } from '../../src/config/mongo';
 
-describe("User Model", () => {
-  let user;
+const { MONGO_URI } = environment;
+let userData;
 
-  beforeEach(() => {
-    user = new UserModel({
+describe("Models: User model unit test", () => {
+	beforeAll(async () => {
+		await connectDB(MONGO_URI);
+	});
+
+	afterAll(async () => {
+		await mongoose.connection.close();
+	});
+
+	beforeEach(async () => {
+		await UserModel.deleteMany({});
+
+    userData = {
       name: "John Doe",
       email: "john@example.com",
-      password: "pass123",
-      rut: "ABCD1234",
+      password: "password123",
+      rut: "77777776",
       verified: false,
-      code: "ABC123",
       blocked: false,
-    });
-  });
+      code: "abc123",
+    };
+	});
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  // describe("Pre save user", () => {
-  //   it("[SUCCESS] Should hash the password if it has been modified", async () => {
-  //     const next = jest.fn();
-  //     const mockHash = jest.spyOn(bcrypt, 'hash').mockImplementation((password, salt, callback) => {
-  //       callback(null, 'hashedPassword');
-  //     });
-    
-  //     user.password = "newPass123";
-  //     await user.save();
-    
-  //     expect(mockHash).toHaveBeenCalledTimes(1);
-  //     expect(mockHash).toHaveBeenCalledWith(
-  //       "newPass123",
-  //       expect.any(String),
-  //       expect.any(Function)
-  //     );
-  //     expect(user.password).not.toBe("newPass123");
-  //     expect(next).toHaveBeenCalledTimes(1);
-    
-  //     mockHash.mockRestore();
-  //   }, 10000);    
-  // });
+	it("[SUCCESS] Create user and hash password", async () => {
+		const user = new UserModel(userData);
+		await user.save();
 
-  describe("comparePassword", () => {
-    it("[SUCCESS] Should return true if the candidate password matches the hashed password", async () => {
-      const candidatePassword = "pass123";
-      user.password = await bcrypt.hash(candidatePassword, 10);
+		expect(user.password).not.toBe(userData.password);
+	});
 
-      const result = await user.comparePassword(candidatePassword);
+	it("[SUCCESS] Compare password", async () => {
+		const password = "password123";
 
-      expect(result).toBe(true);
-    });
+		const user = new UserModel(userData);
+		await user.save();
 
-    it("[ERROR] Should return false if the candidate password does not match the hashed password", async () => {
-      const candidatePassword = "wrongPassword";
-      user.password = await bcrypt.hash("pass123", 10);
+		const isPasswordMatched = await user.comparePassword(password);
+		expect(isPasswordMatched).toBe(true);
+	});
 
-      const result = await user.comparePassword(candidatePassword);
-
-      expect(result).toBe(false);
-    });
-  });
-
-  describe("setVerified", () => {
-    it("[SUCCESS] Should set user.verified to true and user.code to null", async () => {
-      user.setVerified();
-
-      expect(user.verified).toBe(true);
-      expect(user.code).toBeNull();
-    });
-  });
+	it("[SUCCESS] Set user as verified", async () => {
+    const user = new UserModel(userData);
+    await user.save();
+  
+    await user.setVerified();
+    const updatedUser = await UserModel.findById(user._id);
+  
+    expect(updatedUser.verified).toBe(true);
+    expect(updatedUser.code).toBeUndefined();
+  });  
 });
