@@ -31,6 +31,7 @@ app.use(
 );
 
 async function startApp() {
+	import("./services/__mocks__/registro-civil.service.mocks.js");
 	await connectDB().then(() => {
 		console.log("Connected to mongo successfully");
 		app.listen(PORT, () =>

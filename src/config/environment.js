@@ -33,7 +33,7 @@ export default {
 		},
 	},
 	REGISTRO_CIVIL_API: {
-		BASE_URL: process.env.REGISTRO_CIVIL_API_BASE_URL || "",
-		APIKEY: process.env.REGISTRO_CIVIL_API_BASE_URL || "",
+		BASE_URL: process.env.REGISTRO_CIVIL_API_BASE_URL || "regcivil.gob.cl/api/v1",
+		APIKEY: process.env.REGISTRO_CIVIL_API_BASE_URL || "1234567890",
 	},
 };

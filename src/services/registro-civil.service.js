@@ -1,30 +1,28 @@
 import axios from "axios";
-import environment from "../config/environment.js";
-
-const {
-	REGISTRO_CIVIL_API: { BASE_URL, APIKEY },
-} = environment;
+import { BASE_URL, APIKEY } from "./__mocks__/registro-civil.service.mocks.js";
 
 const axiosInstance = axios.create({
-	baseURL: BASE_URL,
-	headers: {
-		headers: {
-			apikey: APIKEY,
-		},
-	},
+    baseURL: BASE_URL,
 });
 
 /**
- * TODO: Send request to the real endpoint
- * Missing endpoint information (contract, documentation, etc) so:
- * Only returns false when the RUT is 55.555.555-5 (any format)
- * PLEASE CHANGE THIS FOR THE CORRECT IMPLEMENTATION OF THE API BEFORE MERGING INTO MASTER
+ * Fetches criminal records for a given RUT.
  * @param {string} rut - User RUT
+ * @returns {Promise<boolean>} - Returns true if criminal records exist, false otherwise.
  */
 async function getCriminalRecords(rut) {
-	//return axiosInstance.get("????").then((response) => true);
-	const fakeResponse = rut !== "555555555";
-	return Promise.resolve(fakeResponse);
+    try {
+        const response = await axiosInstance.get(`/person/${rut}/criminal_records`, {
+            headers: {
+				'X-API-Key': apiKey,
+			  },
+        });
+        const { quantity } = response.data;
+        return quantity > 0;
+    } catch (error) {
+        console.error("Error fetching criminal records:", error);
+        return false;
+    }
 }
 
 export { getCriminalRecords };
