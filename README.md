@@ -37,3 +37,9 @@ npm run coverage
 
 The project tests were performed, trying to overcome the 80% of coverage, and we did, it is worth mentioning that the user.model tests can fail if mongo version is not correct or if it is not running, we tried to perform the mock for the civil registry service, but unfortunately this never worked <br/>
 <img src="assets/coverage.png" height="651px" width="686px"/>
+
+# Members
+
+- Adolfo Plaza
+- Alejandro Valenzuela
+- Rodrigo Valenzuela
